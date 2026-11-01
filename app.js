@@ -1,20 +1,13 @@
-// State & Storage Keys
+// Local Storage Keys
 const STORAGE_KEYS = {
-  PIN: 'aarogya_security_pin',
-  API_KEY: 'aarogya_gemini_key',
-  MODEL: 'aarogya_gemini_model'
+  API_KEY: 'aura_voice_gemini_key',
+  TOPIC: 'aura_voice_custom_topic',
+  MODEL: 'aura_voice_gemini_model'
 };
 
-// Acupressure System Persona
-const SYSTEM_PROMPT = `You are Dr. Aarogya, a gentle, wise female Indian acupressure and reflexology doctor. 
-- You speak in polite, warm, conversational Hindi (or Hinglish). 
-- Always respond in 1 to 2 small, comforting sentences (under 25 words).
-- Immediately suggest the exact practical acupressure point (e.g., LI4/Hegu for headache, PC6/Neiguan for acidity/nausea, Yin Tang for stress/insomnia, ST36 for fatigue).
-- Always end with 1 short natural conversational question to ask if they found the point.
-- Never give long medical lectures. Talk naturally like a real phone call.`;
-
-let currentPin = localStorage.getItem(STORAGE_KEYS.PIN) || '1234';
+// Default States
 let apiKey = localStorage.getItem(STORAGE_KEYS.API_KEY) || '';
+let userTopic = localStorage.getItem(STORAGE_KEYS.TOPIC) || 'General Assistant (Kuch Bhi Puchhein)';
 let selectedModel = localStorage.getItem(STORAGE_KEYS.MODEL) || 'gemini-3.5-flash-lite';
 
 let activeMediaStream = null;
@@ -26,140 +19,143 @@ let callDuration = 0;
 let timerInterval = null;
 let ttsHeartbeat = null;
 
-// DOM Elements
-const pinScreen = document.getElementById('pin-screen');
+// DOM Selectors
 const homeScreen = document.getElementById('home-screen');
 const callScreen = document.getElementById('call-screen');
-const settingsModal = document.getElementById('settings-modal');
+const configModal = document.getElementById('config-modal');
 
-const pinInput = document.getElementById('pin-input');
-const pinError = document.getElementById('pin-error');
-const btnUnlock = document.getElementById('btn-unlock');
-
-const btnStartCall = document.getElementById('btn-start-call');
-const btnHangup = document.getElementById('btn-hangup');
-const btnToggleMic = document.getElementById('btn-toggle-mic');
-const micIcon = document.getElementById('mic-icon');
-const callTimer = document.getElementById('call-timer');
-const callStatus = document.getElementById('call-status');
-const callAvatarWrap = document.getElementById('call-avatar-wrap');
+const displayTopic = document.getElementById('display-topic');
+const callTopicIndicator = document.getElementById('call-topic-indicator');
+const callDurationEl = document.getElementById('call-duration');
+const callStatusPill = document.getElementById('call-status-pill');
+const callAuraContainer = document.getElementById('call-aura-container');
 
 const boxUser = document.getElementById('box-user');
 const boxAI = document.getElementById('box-ai');
-const textUserState = document.getElementById('text-user-state');
-const textAIState = document.getElementById('text-ai-state');
+const lblUserState = document.getElementById('lbl-user-state');
+const lblAIState = document.getElementById('lbl-ai-state');
 
-// Settings Elements
-const btnOpenSettings = document.getElementById('btn-open-settings');
-const btnCloseSettings = document.getElementById('btn-close-settings');
-const btnSaveSettings = document.getElementById('btn-save-settings');
-const inputApiKey = document.getElementById('input-api-key');
-const selectModel = document.getElementById('select-model');
-const inputNewPin = document.getElementById('input-new-pin');
+const btnCallNow = document.getElementById('btn-call-now');
+const btnEndCall = document.getElementById('btn-end-call');
+const btnMuteMic = document.getElementById('btn-mute-mic');
+const btnOpenConfig = document.getElementById('btn-open-config');
+const btnCloseConfig = document.getElementById('btn-close-config');
+const btnSaveConfig = document.getElementById('btn-save-config');
 
-// --- 1. PIN Security Logic ---
-btnUnlock.addEventListener('click', () => {
-  const entered = pinInput.value.trim();
-  if (entered === currentPin) {
-    pinError.textContent = '';
-    pinScreen.classList.remove('active');
-    homeScreen.classList.add('active');
-    checkApiKeySetup();
-  } else {
-    pinError.textContent = 'अमान्य PIN! कृपया सही 4-अंकों का PIN दर्ज करें।';
-    pinInput.value = '';
-    pinInput.focus();
-  }
-});
+const cfgApiKey = document.getElementById('cfg-api-key');
+const cfgTopic = document.getElementById('cfg-topic');
+const cfgModel = document.getElementById('cfg-model');
 
-pinInput.addEventListener('keyup', (e) => {
-  if (e.key === 'Enter') btnUnlock.click();
-});
-
-function checkApiKeySetup() {
+// --- Initialization ---
+function initApp() {
+  updateTopicDisplays();
   if (!apiKey) {
-    settingsModal.classList.add('active');
+    openConfigModal();
   }
 }
+initApp();
 
-// Settings Modal Handlers
-btnOpenSettings.addEventListener('click', () => {
-  inputApiKey.value = apiKey;
-  selectModel.value = selectedModel;
-  inputNewPin.value = currentPin;
-  settingsModal.classList.add('active');
-});
+function updateTopicDisplays() {
+  displayTopic.textContent = userTopic;
+  callTopicIndicator.textContent = userTopic;
+}
 
-btnCloseSettings.addEventListener('click', () => {
-  settingsModal.classList.remove('active');
-});
+// --- Settings Handlers ---
+function openConfigModal() {
+  cfgApiKey.value = apiKey;
+  cfgTopic.value = userTopic;
+  cfgModel.value = selectedModel;
+  configModal.classList.add('active');
+}
 
-btnSaveSettings.addEventListener('click', () => {
-  const newKey = inputApiKey.value.trim();
-  const newMod = selectModel.value;
-  const newP = inputNewPin.value.trim();
+btnOpenConfig.addEventListener('click', openConfigModal);
+btnCloseConfig.addEventListener('click', () => configModal.classList.remove('active'));
 
-  if (newP && newP.length === 4) {
-    currentPin = newP;
-    localStorage.setItem(STORAGE_KEYS.PIN, newP);
+btnSaveConfig.addEventListener('click', () => {
+  const enteredKey = cfgApiKey.value.trim();
+  const enteredTopic = cfgTopic.value.trim() || 'General Assistant';
+  const enteredModel = cfgModel.value;
+
+  if (!enteredKey) {
+    alert('Kripya apni Gemini API Key daalein!');
+    return;
   }
 
-  apiKey = newKey;
-  selectedModel = newMod;
-  localStorage.setItem(STORAGE_KEYS.API_KEY, newKey);
-  localStorage.setItem(STORAGE_KEYS.MODEL, newMod);
+  apiKey = enteredKey;
+  userTopic = enteredTopic;
+  selectedModel = enteredModel;
 
-  settingsModal.classList.remove('active');
-  alert('सेटिंग्स सुरक्षित रूप से सेव हो गईं!');
+  localStorage.setItem(STORAGE_KEYS.API_KEY, apiKey);
+  localStorage.setItem(STORAGE_KEYS.TOPIC, userTopic);
+  localStorage.setItem(STORAGE_KEYS.MODEL, selectedModel);
+
+  updateTopicDisplays();
+  configModal.classList.remove('active');
 });
 
-// --- 2. Call Handlers & Persistent Mic ---
-btnStartCall.addEventListener('click', async () => {
+// --- Dynamic Prompt Generator ---
+function buildDynamicSystemInstruction() {
+  return `You are an authentic, smart, and friendly voice-calling AI Assistant.
+Specialized Topic/Role defined by user: "${userTopic}".
+
+Rules for voice call conversation:
+1. Speak in polite, conversational Hindi or Hinglish (as natural as a human speaking on a phone call).
+2. Keep every reply concise (strictly 1 to 2 short sentences, maximum 25 words).
+3. Directly answer the question or assist regarding the topic.
+4. End with 1 short, engaging question to keep the conversation flowing.
+5. Do not use asterisks, markdown, emojis, or bullet points because this will be spoken out loud.`;
+}
+
+// --- Start Voice Call ---
+btnCallNow.addEventListener('click', async () => {
   if (!apiKey) {
-    alert('कृपया पहले सेटिंग्स में जाकर अपनी Gemini API Key दर्ज करें!');
-    settingsModal.classList.add('active');
+    alert('Pehle apni Gemini API Key enter karein!');
+    openConfigModal();
     return;
   }
 
   try {
-    // Single persistent audio permission request before starting call screen
+    // Single persistent audio permission request
     activeMediaStream = await navigator.mediaDevices.getUserMedia({
       audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
     });
 
-    initCallInterface();
+    startCallView();
   } catch (err) {
-    alert('माइक्रोफोन अनुमति आवश्यक है: ' + err.message);
+    alert('Microphone permission zaroori hai voice call ke liye: ' + err.message);
   }
 });
 
-function initCallInterface() {
+function startCallView() {
   isCallActive = true;
   homeScreen.classList.remove('active');
   callScreen.classList.add('active');
 
   callDuration = 0;
-  callTimer.textContent = '00:00';
+  callDurationEl.textContent = '00:00';
   timerInterval = setInterval(() => {
     callDuration++;
     const m = String(Math.floor(callDuration / 60)).padStart(2, '0');
     const s = String(callDuration % 60).padStart(2, '0');
-    callTimer.textContent = `${m}:${s}`;
+    callDurationEl.textContent = `${m}:${s}`;
   }, 1000);
 
-  setupSpeechRecognition();
+  initContinuousSpeechRecognizer();
 
-  // AI speaks first greeting
-  callStatus.textContent = 'डॉ. आरोग्य बोल रही हैं...';
+  // Initial Natural Greeting based on Topic
+  callStatusPill.textContent = 'Assistant bol raha hai...';
+  callStatusPill.className = 'status-badge speaking';
   setTurnState('ai_speaking');
-  speakNaturalDoctorVoice('नमस्ते! मैं डॉ. आरोग्य हूँ। आपको शरीर में कहाँ दर्द या परेशानी महसूस हो रही है?');
+
+  const greeting = `Namaste! Main aapka AI assistant hoon. Aaj hum "${userTopic}" ke baare me baat karenge. Aap kya poochna chahte hain?`;
+  speakNaturalSpokenVoice(greeting);
 }
 
-// Web Speech Recognition (Single Continuous Pipeline)
-function setupSpeechRecognition() {
+// --- Speech Recognition (Continuous Native Browser STT) ---
+function initContinuousSpeechRecognizer() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
-    alert('आपके ब्राउज़र में Web Speech API उपलब्ध नहीं है। कृपया Chrome उपयोग करें।');
+    alert('Aapke browser me Web Speech API supported nahi hai. Kripya Chrome use karein.');
     return;
   }
 
@@ -174,26 +170,28 @@ function setupSpeechRecognition() {
     const transcript = event.results[event.results.length - 1][0].transcript.trim();
     if (!transcript) return;
 
-    // User finished speaking, transfer to AI
+    // User paused/finished speaking -> Switch to AI Thinking
     setTurnState('ai_thinking');
-    callStatus.textContent = 'डॉ. आरोग्य सोच रही हैं...';
+    callStatusPill.textContent = 'AI soch raha hai...';
+    callStatusPill.className = 'status-badge';
 
-    const reply = await queryGeminiAPI(transcript);
+    const aiResponse = await queryGeminiDirect(transcript);
     if (isCallActive) {
-      callStatus.textContent = 'डॉ. आरोग्य बोल रही हैं...';
+      callStatusPill.textContent = 'Assistant bol raha hai...';
+      callStatusPill.className = 'status-badge speaking';
       setTurnState('ai_speaking');
-      speakNaturalDoctorVoice(reply);
+      speakNaturalSpokenVoice(aiResponse);
     }
   };
 
   speechRecognizer.onerror = (e) => {
     if (e.error !== 'no-speech' && isCallActive) {
-      console.warn('Speech Engine Notice:', e.error);
+      console.warn('Speech engine:', e.error);
     }
   };
 
   speechRecognizer.onend = () => {
-    // Auto-restart quietly without reprompting permission
+    // Auto-revive without triggering browser prompt
     if (isCallActive && !isAISpeaking) {
       try { speechRecognizer.start(); } catch (err) {}
     }
@@ -201,20 +199,20 @@ function setupSpeechRecognition() {
 
   try {
     speechRecognizer.start();
-  } catch (e) {}
+  } catch (err) {}
 }
 
-// --- 3. Gemini Flash-Lite API Query ---
-async function queryGeminiAPI(userText) {
+// --- Gemini API Query ---
+async function queryGeminiDirect(userQuery) {
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`;
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`;
     const payload = {
-      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-      contents: [{ role: 'user', parts: [{ text: userText }] }],
-      generationConfig: { temperature: 0.6, maxOutputTokens: 80 }
+      systemInstruction: { parts: [{ text: buildDynamicSystemInstruction() }] },
+      contents: [{ role: 'user', parts: [{ text: userQuery }] }],
+      generationConfig: { temperature: 0.7, maxOutputTokens: 90 }
     };
 
-    const res = await fetch(url, {
+    const res = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -224,14 +222,14 @@ async function queryGeminiAPI(userText) {
     if (data.candidates && data.candidates[0].content.parts[0].text) {
       return data.candidates[0].content.parts[0].text.replace(/[\*\#\_]/g, '').trim();
     }
-    return 'माफ़ कीजियेगा, क्या आप अपना दर्द एक बार फिर बता सकते हैं?';
+    return 'Maaf kijiyega, aapki baat clear nahi aayi. Kya aap dobara bol sakte hain?';
   } catch (err) {
-    return 'आपकी आवाज़ साफ़ नहीं आ पाई। सिर या पेट में कहाँ तकलीफ़ है?';
+    return 'Connection me thodi dikkat aayi. Aap ek baar dobara poochhenge?';
   }
 }
 
-// --- 4. Natural Voice Playback & Turn Management ---
-function speakNaturalDoctorVoice(text) {
+// --- Natural Voice Output (SpeechSynthesis) ---
+function speakNaturalSpokenVoice(text) {
   if (!('speechSynthesis' in window) || !isCallActive) return;
 
   window.speechSynthesis.cancel();
@@ -239,22 +237,22 @@ function speakNaturalDoctorVoice(text) {
 
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = 'hi-IN';
-  utterance.rate = 0.93;
+  utterance.rate = 0.95;
   utterance.pitch = 1.0;
 
-  // Best Indian Hindi Voice Selection
+  // Best Indian Hindi/English Voice Selection
   const voices = window.speechSynthesis.getVoices();
-  const hiVoice = voices.find(v => v.lang.includes('hi') || v.name.includes('Google हिन्दी') || v.name.includes('Swara'));
-  if (hiVoice) utterance.voice = hiVoice;
+  const naturalVoice = voices.find(v => v.lang.includes('hi') || v.name.includes('Google हिन्दी') || v.name.includes('Swara') || v.name.includes('India'));
+  if (naturalVoice) utterance.voice = naturalVoice;
 
-  // Keep-alive heartbeat against Android Chrome audio cutoff
+  // Heartbeat to prevent Chrome cutoff
   clearInterval(ttsHeartbeat);
   ttsHeartbeat = setInterval(() => {
     if (window.speechSynthesis.speaking) {
       window.speechSynthesis.pause();
       window.speechSynthesis.resume();
     }
-  }, 4000);
+  }, 3500);
 
   utterance.onend = () => {
     clearInterval(ttsHeartbeat);
@@ -262,9 +260,9 @@ function speakNaturalDoctorVoice(text) {
 
     isAISpeaking = false;
     setTurnState('user_speaking');
-    callStatus.textContent = 'आपकी बारी है, बोलिए...';
+    callStatusPill.textContent = 'Aapki baari hai, boliye...';
+    callStatusPill.className = 'status-badge listening';
 
-    // Safely resume listening
     if (speechRecognizer) {
       try { speechRecognizer.start(); } catch (e) {}
     }
@@ -279,45 +277,44 @@ function speakNaturalDoctorVoice(text) {
   window.speechSynthesis.speak(utterance);
 }
 
-// State Machine UI Sync
+// --- Mutual Exclusive Turn State Management ---
 function setTurnState(state) {
   if (state === 'ai_speaking') {
-    boxAI.className = 'turn-box active';
-    boxUser.className = 'turn-box';
-    textAIState.textContent = 'बोल रही हैं...';
-    textUserState.textContent = 'आप सुन रहे हैं...';
-    callAvatarWrap.classList.add('active');
+    boxAI.className = 'dock-card active-ai';
+    boxUser.className = 'dock-card';
+    lblAIState.textContent = 'Bol raha hai...';
+    lblUserState.textContent = 'Aap sun rahe hain';
+    callAuraContainer.classList.add('speaking');
   } else if (state === 'ai_thinking') {
-    boxAI.className = 'turn-box';
-    boxUser.className = 'turn-box';
-    textAIState.textContent = 'विचार कर रही हैं...';
-    textUserState.textContent = 'रुकें...';
-    callAvatarWrap.classList.remove('active');
+    boxAI.className = 'dock-card';
+    boxUser.className = 'dock-card';
+    lblAIState.textContent = 'Soch raha hai...';
+    lblUserState.textContent = 'Rukein...';
+    callAuraContainer.classList.remove('speaking');
   } else if (state === 'user_speaking') {
-    boxAI.className = 'turn-box';
-    boxUser.className = 'turn-box active-user';
-    textAIState.textContent = 'सुन रही हैं...';
-    textUserState.textContent = 'आप बोल रहे हैं...';
-    callAvatarWrap.classList.remove('active');
+    boxAI.className = 'dock-card';
+    boxUser.className = 'dock-card active-user';
+    lblAIState.textContent = 'Sun raha hai...';
+    lblUserState.textContent = 'Boliye...';
+    callAuraContainer.classList.remove('speaking');
   }
 }
 
-// Mic Mute Toggle
-btnToggleMic.addEventListener('click', () => {
+// --- Controls: Mic Mute / Hangup ---
+btnMuteMic.addEventListener('click', () => {
   isMicMuted = !isMicMuted;
   if (isMicMuted) {
-    micIcon.textContent = '🔇';
-    btnToggleMic.style.background = '#ea4335';
+    btnMuteMic.querySelector('.btn-icon-wrapper').style.background = '#ff3b30';
+    btnMuteMic.querySelector('label').textContent = 'Muted';
   } else {
-    micIcon.textContent = '🎤';
-    btnToggleMic.style.background = '#202c33';
+    btnMuteMic.querySelector('.btn-icon-wrapper').style.background = '#1f2c34';
+    btnMuteMic.querySelector('label').textContent = 'Mic';
   }
 });
 
-// --- 5. Clean Hangup & Immediate Mic Hardware Release ---
-btnHangup.addEventListener('click', terminateCall);
+btnEndCall.addEventListener('click', terminateActiveCall);
 
-function terminateCall() {
+function terminateActiveCall() {
   isCallActive = false;
   isAISpeaking = false;
 
