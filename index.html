@@ -3,169 +3,180 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Dr. Aarogya - Acupressure Voice Assistant</title>
+  <title>Aura AI - Natural Voice Calling Assistant</title>
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <!-- Screen 1: Security PIN Lock Overlay -->
-  <div id="pin-screen" class="screen-layer active">
-    <div class="pin-card">
-      <div class="lock-icon">🔒</div>
-      <h2>सुरक्षा सत्यापन (Security Access)</h2>
-      <p>डॉ. आरोग्य असिस्टेंट का उपयोग करने के लिए 4-अंकों का PIN दर्ज करें:</p>
-      
-      <div class="pin-input-group">
-        <input type="password" id="pin-input" maxlength="4" placeholder="••••" autocomplete="off" inputmode="numeric">
-      </div>
-      <button id="btn-unlock" class="btn-primary">Unlock / प्रवेश करें</button>
-      <div id="pin-error" class="error-text"></div>
-      <div class="pin-hint">डिफ़ॉल्ट PIN: <strong>1234</strong> (सेटिंग्स में बदल सकते हैं)</div>
-    </div>
-  </div>
-
-  <!-- Screen 2: WhatsApp Style Home Dashboard -->
-  <div id="home-screen" class="screen-layer">
-    <header class="app-header">
-      <div class="header-profile">
-        <div class="avatar-small">
-          <span>आ</span>
-          <span class="online-dot"></span>
-        </div>
-        <div class="header-info">
-          <h3>डॉ. आरोग्य</h3>
-          <p>Online • Acupressure Specialist</p>
+  <!-- Screen 1: Modern Disha-Style Home Dashboard -->
+  <div id="home-screen" class="screen-view active">
+    <!-- Top Header -->
+    <header class="home-header">
+      <div class="brand-meta">
+        <div class="logo-mark">⚡</div>
+        <div class="brand-text">
+          <h2>Aura Voice AI</h2>
+          <span class="live-pill"><span class="dot"></span> Online</span>
         </div>
       </div>
-      <div class="header-actions">
-        <button id="btn-open-settings" class="icon-btn" title="Settings">⚙️</button>
-      </div>
+      <button id="btn-open-config" class="btn-icon" title="Settings & Persona">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
     </header>
 
-    <main class="home-main">
-      <div class="doctor-hero-card">
-        <div class="doctor-avatar-large">
-          <div class="pulse-ring"></div>
-          <div class="inner-avatar">🩺</div>
+    <!-- Main Hero Card -->
+    <main class="home-content">
+      <div class="hero-card">
+        <div class="avatar-aura-wrapper">
+          <div class="aura-glow"></div>
+          <div class="avatar-hero">
+            <span id="hero-avatar-icon">🎙️</span>
+          </div>
         </div>
-        <h2>डॉ. आरोग्य (Acupressure AI)</h2>
-        <span class="badge">100% Free • High Speed • Natural Hindi Voice</span>
-        <p class="doctor-desc">
-          नमस्ते! मुझे अपने सिरदर्द, गैस, पीठ दर्द या तनाव के बारे में बताएं। मैं तुरंत आपको सही एक्यूप्रेशर पॉइंट बताऊँगी।
+
+        <h1 id="hero-title" class="hero-title">Universal Voice Assistant</h1>
+        <div class="topic-tag">
+          <span class="tag-label">Active Topic:</span>
+          <span id="display-topic" class="tag-value">General Assistant (Kuch Bhi Puchhein)</span>
+        </div>
+
+        <p class="hero-subtext">
+          Zero delay, natural speech recognition aur instant spoken replies ke sath direct voice calling experience.
         </p>
 
-        <button id="btn-start-call" class="btn-call-now">
-          <span class="phone-icon">📞</span>
-          <span>Call Now / कॉल करें</span>
+        <!-- Big Call Now Button -->
+        <button id="btn-call-now" class="btn-call-action">
+          <div class="icon-circle">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24 11.72 11.72 0 003.68.59 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.72 11.72 0 00.59 3.68 1 1 0 01-.24 1.02l-2.23 2.09z"/>
+            </svg>
+          </div>
+          <span>Call Now • बात शुरू करें</span>
         </button>
       </div>
 
-      <div class="quick-guide-card">
-        <h4>⚡ त्वरित गाइड (Quick Points):</h4>
-        <ul>
-          <li><strong>सिरदर्द / माइग्रेन:</strong> LI4 (Hegu) पॉइंट</li>
-          <li><strong>गैस / एसिडिटी / उल्टी:</strong> PC6 (Neiguan) पॉइंट</li>
-          <li><strong>तनाव / नींद ना आना:</strong> Yin Tang (तीसरा नेत्र) पॉइंट</li>
-        </ul>
+      <!-- Quick Feature Pill -->
+      <div class="feature-strip">
+        <div class="feat-item">✨ 100% Free Tier</div>
+        <div class="feat-item">⚡ 0.8s Turnaround</div>
+        <div class="feat-item">🔒 Local API Storage</div>
       </div>
     </main>
   </div>
 
-  <!-- Screen 3: WhatsApp Style Dedicated Fullscreen Call Screen -->
-  <div id="call-screen" class="screen-layer">
-    <div class="call-top-bar">
-      <span class="secure-tag">🔒 End-to-End Encrypted Call</span>
-      <div id="call-timer" class="call-timer">00:00</div>
+  <!-- Screen 2: Modern WhatsApp Calling Screen -->
+  <div id="call-screen" class="screen-view">
+    <div class="call-header-meta">
+      <div class="encryption-notice">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        <span>End-to-end Encrypted Voice</span>
+      </div>
+      <div id="call-duration" class="call-timer">00:00</div>
     </div>
 
-    <div class="call-center">
-      <div class="call-avatar-wrapper" id="call-avatar-wrap">
-        <div class="call-pulse-ring ring-1"></div>
-        <div class="call-pulse-ring ring-2"></div>
-        <div class="call-avatar">
-          <span>🩺</span>
+    <!-- Center Calling Aura -->
+    <div class="call-body">
+      <div id="call-aura-container" class="call-aura-container">
+        <div class="pulse-ring ring-one"></div>
+        <div class="pulse-ring ring-two"></div>
+        <div class="pulse-ring ring-three"></div>
+        <div class="call-avatar-circle">
+          <span id="call-avatar-icon">🎙️</span>
         </div>
       </div>
-      <h2 class="call-name">डॉ. आरोग्य</h2>
-      <p id="call-status" class="call-status">कॉल कनेक्ट हो रही है...</p>
+
+      <h2 id="call-partner-name" class="call-partner-title">AI Assistant</h2>
+      <p id="call-topic-indicator" class="call-topic-subtitle">General Knowledge & Discussion</p>
+      <div id="call-status-pill" class="status-badge connecting">Connecting...</div>
     </div>
 
-    <!-- Mutual Turn-Taking Dual Visualizer -->
-    <div class="dual-turn-container">
-      <div id="box-user" class="turn-box">
-        <div class="box-header">
-          <span class="turn-label">👤 आप (You)</span>
-          <span id="dot-user" class="status-indicator"></span>
+    <!-- Dual Speaking Interaction Visualizer -->
+    <div class="interaction-dock">
+      <div id="box-user" class="dock-card">
+        <div class="dock-header">
+          <span class="dock-title">👤 Aap (You)</span>
+          <span class="dock-dot"></span>
         </div>
-        <div class="bars-container">
-          <div class="wave-bar"></div>
-          <div class="wave-bar"></div>
-          <div class="wave-bar"></div>
-          <div class="wave-bar"></div>
+        <div class="sound-wave">
+          <span></span><span></span><span></span><span></span><span></span>
         </div>
-        <span id="text-user-state" class="box-state-text">तैयार हैं...</span>
+        <span id="lbl-user-state" class="dock-state">Wait karein</span>
       </div>
 
-      <div id="box-ai" class="turn-box">
-        <div class="box-header">
-          <span class="turn-label">🩺 डॉ. आरोग्य</span>
-          <span id="dot-ai" class="status-indicator"></span>
+      <div id="box-ai" class="dock-card">
+        <div class="dock-header">
+          <span class="dock-title">⚡ AI Assistant</span>
+          <span class="dock-dot"></span>
         </div>
-        <div class="bars-container">
-          <div class="wave-bar ai-bar"></div>
-          <div class="wave-bar ai-bar"></div>
-          <div class="wave-bar ai-bar"></div>
-          <div class="wave-bar ai-bar"></div>
+        <div class="sound-wave ai-wave">
+          <span></span><span></span><span></span><span></span><span></span>
         </div>
-        <span id="text-ai-state" class="box-state-text">सुन रही हैं...</span>
+        <span id="lbl-ai-state" class="dock-state">Sun raha hai</span>
       </div>
     </div>
 
-    <!-- Call Control Buttons -->
-    <div class="call-footer">
-      <button id="btn-toggle-mic" class="call-ctrl-btn" title="Mute/Unmute Mic">
-        <span id="mic-icon">🎤</span>
+    <!-- Call Controls -->
+    <div class="call-actions-dock">
+      <button id="btn-mute-mic" class="action-btn" title="Mute Mic">
+        <span class="btn-icon-wrapper">
+          <svg id="svg-mic-on" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+            <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+          </svg>
+        </span>
         <label>Mic</label>
       </button>
 
-      <button id="btn-hangup" class="call-ctrl-btn hangup-btn" title="End Call">
-        <span>📞</span>
-        <label>कट करें</label>
+      <button id="btn-end-call" class="action-btn end-call" title="Cut Call">
+        <span class="btn-icon-wrapper">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.58.9-1.04.48-1.99 1.1-2.85 1.83-.24.21-.57.29-.87.21-.3-.08-.55-.29-.68-.57L.34 11.23c-.22-.48-.12-1.04.25-1.42C3.12 7.3 7.36 6 12 6s8.88 1.3 11.41 3.81c.37.38.47.94.25 1.42l-2.08 3.96c-.13.28-.38.49-.68.57-.3.08-.63 0-.87-.21-.86-.73-1.81-1.35-2.85-1.83-.35-.16-.58-.51-.58-.9V9.72C15.15 9.25 13.6 9 12 9z"/>
+          </svg>
+        </span>
+        <label>Cut Karein</label>
       </button>
     </div>
   </div>
 
-  <!-- Settings Modal (API Key & PIN Change) -->
-  <div id="settings-modal" class="modal-layer">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3>सेटिंग्स एवं सुरक्षा (Settings)</h3>
-        <button id="btn-close-settings" class="close-x">&times;</button>
+  <!-- Settings & Custom Persona Modal -->
+  <div id="config-modal" class="modal-backdrop">
+    <div class="config-sheet">
+      <div class="sheet-header">
+        <h3>Assistant Configuration</h3>
+        <button id="btn-close-config" class="btn-close">&times;</button>
       </div>
-      <div class="modal-body">
-        <div class="field-group">
-          <label for="input-api-key">Gemini API Key (Local Storage me Safe):</label>
-          <input type="password" id="input-api-key" placeholder="AIzaSy...">
-          <small>आपकी key केवल आपके ब्राउज़र में सुरक्षित रहेगी।</small>
+
+      <div class="sheet-body">
+        <div class="input-field">
+          <label for="cfg-api-key">Gemini API Key <span class="required">*</span></label>
+          <input type="password" id="cfg-api-key" placeholder="AIzaSy..." autocomplete="off">
+          <small>Ye key aapke browser me local storage me safe rehti hai, kisi server par nahi jaati.</small>
         </div>
 
-        <div class="field-group">
-          <label for="select-model">Gemini Model:</label>
-          <select id="select-model">
-            <option value="gemini-3.5-flash-lite" selected>gemini-3.5-flash-lite (15 RPM / 500 RPD Free)</option>
-            <option value="gemini-3.8-flash">gemini-3.8-flash (Latest General)</option>
+        <div class="input-field">
+          <label for="cfg-topic">Main Topic / Persona Role</label>
+          <textarea id="cfg-topic" rows="3" placeholder="Udaharan: General Assistant, Health & Fitness Coach, English Speaking Partner, Financial Guide..."></textarea>
+          <small>Aap jo bhi topic yaha likhenge, AI usi hisaab se aapse baat karega.</small>
+        </div>
+
+        <div class="input-field">
+          <label for="cfg-model">Gemini Model</label>
+          <select id="cfg-model">
+            <option value="gemini-3.5-flash-lite" selected>gemini-3.5-flash-lite (Sabse Tez & Free Tier)</option>
+            <option value="gemini-3.8-flash">gemini-3.8-flash (Latest Model)</option>
           </select>
         </div>
 
-        <div class="field-group">
-          <label for="input-new-pin">नया 4-अंकों का Access PIN:</label>
-          <input type="password" id="input-new-pin" maxlength="4" placeholder="1234">
-        </div>
-
-        <button id="btn-save-settings" class="btn-primary">Save Settings / सहेजें</button>
+        <button id="btn-save-config" class="btn-save">Save & Continue</button>
       </div>
     </div>
   </div>
