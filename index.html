@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Dr. Aarogya - Acupressure Voice Assistant</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Screen 1: Security PIN Lock Overlay -->
+  <div id="pin-screen" class="screen-layer active">
+    <div class="pin-card">
+      <div class="lock-icon">🔒</div>
+      <h2>सुरक्षा सत्यापन (Security Access)</h2>
+      <p>डॉ. आरोग्य असिस्टेंट का उपयोग करने के लिए 4-अंकों का PIN दर्ज करें:</p>
+      
+      <div class="pin-input-group">
+        <input type="password" id="pin-input" maxlength="4" placeholder="••••" autocomplete="off" inputmode="numeric">
+      </div>
+      <button id="btn-unlock" class="btn-primary">Unlock / प्रवेश करें</button>
+      <div id="pin-error" class="error-text"></div>
+      <div class="pin-hint">डिफ़ॉल्ट PIN: <strong>1234</strong> (सेटिंग्स में बदल सकते हैं)</div>
+    </div>
+  </div>
+
+  <!-- Screen 2: WhatsApp Style Home Dashboard -->
+  <div id="home-screen" class="screen-layer">
+    <header class="app-header">
+      <div class="header-profile">
+        <div class="avatar-small">
+          <span>आ</span>
+          <span class="online-dot"></span>
+        </div>
+        <div class="header-info">
+          <h3>डॉ. आरोग्य</h3>
+          <p>Online • Acupressure Specialist</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btn-open-settings" class="icon-btn" title="Settings">⚙️</button>
+      </div>
+    </header>
+
+    <main class="home-main">
+      <div class="doctor-hero-card">
+        <div class="doctor-avatar-large">
+          <div class="pulse-ring"></div>
+          <div class="inner-avatar">🩺</div>
+        </div>
+        <h2>डॉ. आरोग्य (Acupressure AI)</h2>
+        <span class="badge">100% Free • High Speed • Natural Hindi Voice</span>
+        <p class="doctor-desc">
+          नमस्ते! मुझे अपने सिरदर्द, गैस, पीठ दर्द या तनाव के बारे में बताएं। मैं तुरंत आपको सही एक्यूप्रेशर पॉइंट बताऊँगी।
+        </p>
+
+        <button id="btn-start-call" class="btn-call-now">
+          <span class="phone-icon">📞</span>
+          <span>Call Now / कॉल करें</span>
+        </button>
+      </div>
+
+      <div class="quick-guide-card">
+        <h4>⚡ त्वरित गाइड (Quick Points):</h4>
+        <ul>
+          <li><strong>सिरदर्द / माइग्रेन:</strong> LI4 (Hegu) पॉइंट</li>
+          <li><strong>गैस / एसिडिटी / उल्टी:</strong> PC6 (Neiguan) पॉइंट</li>
+          <li><strong>तनाव / नींद ना आना:</strong> Yin Tang (तीसरा नेत्र) पॉइंट</li>
+        </ul>
+      </div>
+    </main>
+  </div>
+
+  <!-- Screen 3: WhatsApp Style Dedicated Fullscreen Call Screen -->
+  <div id="call-screen" class="screen-layer">
+    <div class="call-top-bar">
+      <span class="secure-tag">🔒 End-to-End Encrypted Call</span>
+      <div id="call-timer" class="call-timer">00:00</div>
+    </div>
+
+    <div class="call-center">
+      <div class="call-avatar-wrapper" id="call-avatar-wrap">
+        <div class="call-pulse-ring ring-1"></div>
+        <div class="call-pulse-ring ring-2"></div>
+        <div class="call-avatar">
+          <span>🩺</span>
+        </div>
+      </div>
+      <h2 class="call-name">डॉ. आरोग्य</h2>
+      <p id="call-status" class="call-status">कॉल कनेक्ट हो रही है...</p>
+    </div>
+
+    <!-- Mutual Turn-Taking Dual Visualizer -->
+    <div class="dual-turn-container">
+      <div id="box-user" class="turn-box">
+        <div class="box-header">
+          <span class="turn-label">👤 आप (You)</span>
+          <span id="dot-user" class="status-indicator"></span>
+        </div>
+        <div class="bars-container">
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+        </div>
+        <span id="text-user-state" class="box-state-text">तैयार हैं...</span>
+      </div>
+
+      <div id="box-ai" class="turn-box">
+        <div class="box-header">
+          <span class="turn-label">🩺 डॉ. आरोग्य</span>
+          <span id="dot-ai" class="status-indicator"></span>
+        </div>
+        <div class="bars-container">
+          <div class="wave-bar ai-bar"></div>
+          <div class="wave-bar ai-bar"></div>
+          <div class="wave-bar ai-bar"></div>
+          <div class="wave-bar ai-bar"></div>
+        </div>
+        <span id="text-ai-state" class="box-state-text">सुन रही हैं...</span>
+      </div>
+    </div>
+
+    <!-- Call Control Buttons -->
+    <div class="call-footer">
+      <button id="btn-toggle-mic" class="call-ctrl-btn" title="Mute/Unmute Mic">
+        <span id="mic-icon">🎤</span>
+        <label>Mic</label>
+      </button>
+
+      <button id="btn-hangup" class="call-ctrl-btn hangup-btn" title="End Call">
+        <span>📞</span>
+        <label>कट करें</label>
+      </button>
+    </div>
+  </div>
+
+  <!-- Settings Modal (API Key & PIN Change) -->
+  <div id="settings-modal" class="modal-layer">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>सेटिंग्स एवं सुरक्षा (Settings)</h3>
+        <button id="btn-close-settings" class="close-x">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="field-group">
+          <label for="input-api-key">Gemini API Key (Local Storage me Safe):</label>
+          <input type="password" id="input-api-key" placeholder="AIzaSy...">
+          <small>आपकी key केवल आपके ब्राउज़र में सुरक्षित रहेगी।</small>
+        </div>
+
+        <div class="field-group">
+          <label for="select-model">Gemini Model:</label>
+          <select id="select-model">
+            <option value="gemini-3.5-flash-lite" selected>gemini-3.5-flash-lite (15 RPM / 500 RPD Free)</option>
+            <option value="gemini-3.8-flash">gemini-3.8-flash (Latest General)</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label for="input-new-pin">नया 4-अंकों का Access PIN:</label>
+          <input type="password" id="input-new-pin" maxlength="4" placeholder="1234">
+        </div>
+
+        <button id="btn-save-settings" class="btn-primary">Save Settings / सहेजें</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
